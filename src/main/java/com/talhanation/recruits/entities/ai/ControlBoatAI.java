@@ -49,6 +49,7 @@ public class ControlBoatAI extends Goal {
         for(Boat boat : list){
             if (boat.canAddPassenger(this.recruit)){
                 recruit.getNavigation().moveTo(list.get(0), 1.15F);
+                if(recruit.distanceTo(boat) < 2D) recruit.startRiding(boat);
             }
         }
     }
