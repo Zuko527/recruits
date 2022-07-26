@@ -1,5 +1,6 @@
 package com.talhanation.recruits.entities.ai;
 
+import com.talhanation.recruits.Main;
 import com.talhanation.recruits.entities.AbstractRecruitEntity;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.goal.Goal;
@@ -23,7 +24,7 @@ public class HorseAIRecruitRide extends Goal {
 
     @Override
     public void tick() {
-        System.out.println("PATHHHHHH");
+        Main.LOGGER.debug("PATHHHHHH");
         this.horse.getNavigation().moveTo(this.recruit.getNavigation().getPath(), speed);
     }
 }
