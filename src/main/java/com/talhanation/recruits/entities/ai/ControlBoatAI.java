@@ -71,7 +71,7 @@ public class ControlBoatAI extends Goal {
             float deltaRotation = recruit.getYRot();
 
             boat.setYRot(boat.getYRot() + deltaRotation * 0.1F);
-            boat.setDeltaMovement(recruit.getForward().x * 0.1F, boat.getDeltaMovement().y, recruit.getForward().z * 0.1F);
+            boat.setDeltaMovement(recruit.getForward().x, boat.getDeltaMovement().y, recruit.getForward().z);
             boat.setPaddleState(true, true);
         }
     }
