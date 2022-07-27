@@ -10,6 +10,7 @@ import java.util.List;
 public class ControlBoatAI extends Goal {
 
     private final AbstractRecruitEntity recruit;
+    private int stuck;
 
     public ControlBoatAI(AbstractRecruitEntity recruit) {
         this.recruit = recruit;
@@ -41,7 +42,7 @@ public class ControlBoatAI extends Goal {
     }
 
     public void tick() {
-        findAndMountBoat();
+        if(!(this.recruit.getVehicle() instanceof Boat))findAndMountBoat();
         double posX = 0, posZ = 0;
 
         if (recruit.getShouldFollow() && recruit.getOwner() != null){
@@ -52,7 +53,15 @@ public class ControlBoatAI extends Goal {
                 posX = recruit.getHoldPos().getX();
                 posZ = recruit.getHoldPos().getZ();
         }
+        if (recruit.getTarget() != null && recruit.getTarget().distanceTo(recruit) >= 3D){
+            posX = recruit.getTarget().getX();
+            posZ = recruit.getTarget().getZ();
+        }
         updateBoatControl(posX, posZ);
+
+        if (this.recruit.getVehicle() instanceof Boat && recruit.getNavigation().isStuck()){
+            stuck++;
+        }
     }
 
     private void findAndMountBoat(){
@@ -66,7 +75,7 @@ public class ControlBoatAI extends Goal {
     }
 
     private void updateBoatControl(double posX, double posZ) {
-        if(this.recruit.getVehicle() instanceof Boat boat) {
+        if(this.recruit.getVehicle() instanceof Boat boat && boat.getPassengers().get(0).equals(this.recruit)) {
             double dx = posX - this.recruit.getX();
             double dz = posZ - this.recruit.getZ();
 
@@ -79,23 +88,28 @@ public class ControlBoatAI extends Goal {
 
             float f = 0.0F;
 
-            if (inputLeft) {
-                boat.setYRot(boat.getYRot() - 2F);
+            if(recruit.getNavigation().isStuck()) {
+                boat.setYRot(boat.getYRot() - 20F);
+                f -= 0.04F;
             }
+            else {
+                if (inputLeft) {
+                    boat.setYRot(boat.getYRot() - 3F);
+                }
 
-            if (inputRight) {
-                boat.setYRot(boat.getYRot() + 2F);
+                if (inputRight) {
+                    boat.setYRot(boat.getYRot() + 3F);
+                }
+
+
+                if (inputRight != inputLeft && !inputUp) {
+                    f += 0.005F;
+                }
+
+                if (inputUp) {
+                    f += 0.04F;
+                }
             }
-
-
-            if (inputRight != inputLeft && !inputUp) {
-                f += 0.005F;
-            }
-
-            if (inputUp) {
-                f += 0.04F;
-            }
-
             boat.setDeltaMovement(boat.getDeltaMovement().add((double)(Mth.sin(-boat.getYRot() * ((float)Math.PI / 180F)) * f), 0.0D, (double)(Mth.cos(boat.getYRot() * ((float)Math.PI / 180F)) * f)));
             boat.setPaddleState(inputRight || inputUp, inputLeft || inputUp);
         }
