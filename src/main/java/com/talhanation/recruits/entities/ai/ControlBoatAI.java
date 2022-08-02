@@ -4,6 +4,7 @@ import com.talhanation.recruits.entities.AbstractRecruitEntity;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.vehicle.Boat;
+import net.minecraft.world.level.pathfinder.BlockPathTypes;
 
 import java.util.List;
 
@@ -16,10 +17,9 @@ public class ControlBoatAI extends Goal {
         this.recruit = recruit;
     }
 
-
     @Override
     public boolean canUse() {
-        return this.recruit.getVehicle() == null; //&& mount ship
+        return true; //&& mount ship
     }
 
     public boolean canContinueToUse() {
@@ -31,7 +31,9 @@ public class ControlBoatAI extends Goal {
     }
 
     public void start(){
-        //this.recruit.getNavigation().stop();
+        this.recruit.setPathfindingMalus(BlockPathTypes.WATER, 8.0F);
+        this.recruit.setPathfindingMalus(BlockPathTypes.BREACH, -1.0F);
+        this.recruit.setPathfindingMalus(BlockPathTypes.WALKABLE, -1.0F);
     }
 
     public void stop(){
@@ -42,18 +44,20 @@ public class ControlBoatAI extends Goal {
     }
 
     public void tick() {
-        if(!(this.recruit.getVehicle() instanceof Boat))findAndMountBoat();
+        if(!(this.recruit.getVehicle() instanceof Boat)) findAndMountBoat();
         double posX = 0, posZ = 0;
 
-        if (recruit.getShouldFollow() && recruit.getOwner() != null){
+
+        if (recruit.getShouldFollow() && recruit.getOwner() != null && recruit.getOwner().distanceTo(recruit) >= 5D){
              posX = recruit.getOwner().getX();
              posZ = recruit.getOwner().getZ();
         }
-        else if (recruit.getShouldHoldPos() && recruit.getHoldPos() != null){
-                posX = recruit.getHoldPos().getX();
-                posZ = recruit.getHoldPos().getZ();
+        else if (recruit.getShouldHoldPos() && recruit.getHoldPos() != null && recruit.getHoldPos().distToCenterSqr(recruit.position()) >= 5D){
+            posX = recruit.getHoldPos().getX();
+            posZ = recruit.getHoldPos().getZ();
+
         }
-        if (recruit.getTarget() != null && recruit.getTarget().distanceTo(recruit) >= 3D){
+        if (recruit.getTarget() != null && recruit.getTarget().distanceTo(recruit) >= 5D){
             posX = recruit.getTarget().getX();
             posZ = recruit.getTarget().getZ();
         }
@@ -87,10 +91,10 @@ public class ControlBoatAI extends Goal {
             boolean inputUp = (Math.abs(drot) < 20.0F);
 
             float f = 0.0F;
-
-            if(recruit.getNavigation().isStuck()) {
-                boat.setYRot(boat.getYRot() - 20F);
-                f -= 0.04F;
+            if(stuck >= 100) {
+                boat.setYRot(boat.getYRot() - 25F);
+                f -= 0.08F;
+                stuck = 50;
             }
             else {
                 if (inputLeft) {

@@ -36,6 +36,8 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
+import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.animal.AbstractFish;
 import net.minecraft.world.entity.animal.IronGolem;
 import net.minecraft.world.entity.animal.horse.AbstractHorse;
@@ -50,6 +52,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.entity.raid.Raider;
+import net.minecraft.world.entity.vehicle.Boat;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.GameRules;
@@ -101,6 +104,15 @@ public abstract class AbstractRecruitEntity extends AbstractInventoryEntity{
         super(entityType, world);
         this.setIsOwned(false);
         this.xpReward = 6;
+    }
+
+    @Override
+    protected PathNavigation createNavigation(Level level) {
+        if(this.isPassenger() & this.getVehicle() instanceof Boat){
+            return new BoatPathNavigator(this, level);
+        }
+        else
+            return new GroundPathNavigation(this, level);
     }
 
     ///////////////////////////////////TICK/////////////////////////////////////////
