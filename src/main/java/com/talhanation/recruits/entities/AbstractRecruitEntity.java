@@ -22,6 +22,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
@@ -38,8 +39,12 @@ import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
+import net.minecraft.world.entity.ai.navigation.WaterBoundPathNavigation;
+import net.minecraft.world.entity.ai.util.DefaultRandomPos;
 import net.minecraft.world.entity.animal.AbstractFish;
+import net.minecraft.world.entity.animal.Dolphin;
 import net.minecraft.world.entity.animal.IronGolem;
+import net.minecraft.world.entity.animal.WaterAnimal;
 import net.minecraft.world.entity.animal.horse.AbstractHorse;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.entity.boss.wither.WitherBoss;
@@ -58,6 +63,9 @@ import net.minecraft.world.item.*;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.level.pathfinder.BlockPathTypes;
+import net.minecraft.world.level.pathfinder.PathComputationType;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.scores.PlayerTeam;
 import net.minecraft.world.scores.Team;
 import net.minecraftforge.network.NetworkHooks;
@@ -109,11 +117,12 @@ public abstract class AbstractRecruitEntity extends AbstractInventoryEntity{
     @Override
     protected PathNavigation createNavigation(Level level) {
         if(this.isPassenger() & this.getVehicle() instanceof Boat){
-            return new BoatPathNavigator(this, level);
+           return new WaterBoundPathNavigation(this, level);
         }
         else
             return new GroundPathNavigation(this, level);
     }
+
 
     ///////////////////////////////////TICK/////////////////////////////////////////
 
@@ -140,6 +149,12 @@ public abstract class AbstractRecruitEntity extends AbstractInventoryEntity{
         updateSwimming();
         updateHunger();
         updateTeam();
+
+        if(this.isPassenger() & this.getVehicle() instanceof Boat){
+            this.setPathfindingMalus(BlockPathTypes.WATER, 0.0F);
+        }
+        else
+            this.setPathfindingMalus(BlockPathTypes.WATER, 8.0F);
 
 /*
         if(hurtTimer <= 1000) {
@@ -198,6 +213,7 @@ public abstract class AbstractRecruitEntity extends AbstractInventoryEntity{
         this.goalSelector.addGoal(0, new FleeTNT(this));
         this.goalSelector.addGoal(0, new FleeFire(this));
         //this.goalSelector.addGoal(0, new (this));
+        this.goalSelector.addGoal(1, new BoatPathAI(this));
         this.goalSelector.addGoal(1, new ControlBoatAI(this));
         this.goalSelector.addGoal(1, new FloatGoal(this));
         this.goalSelector.addGoal(1, new RecruitEatGoal(this));

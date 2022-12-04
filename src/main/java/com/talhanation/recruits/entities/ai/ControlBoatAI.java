@@ -31,9 +31,7 @@ public class ControlBoatAI extends Goal {
     }
 
     public void start(){
-        this.recruit.setPathfindingMalus(BlockPathTypes.WATER, 8.0F);
-        this.recruit.setPathfindingMalus(BlockPathTypes.BREACH, -1.0F);
-        this.recruit.setPathfindingMalus(BlockPathTypes.WALKABLE, -1.0F);
+
     }
 
     public void stop(){
