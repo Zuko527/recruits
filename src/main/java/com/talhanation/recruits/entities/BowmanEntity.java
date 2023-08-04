@@ -3,6 +3,7 @@ package com.talhanation.recruits.entities;
 
 import com.talhanation.recruits.IStrategicFire;
 import com.talhanation.recruits.config.RecruitsModConfig;
+import com.talhanation.recruits.entities.ai.RecruitMoveTowardsTargetGoal;
 import com.talhanation.recruits.entities.ai.RecruitStrategicFire;
 import com.talhanation.recruits.entities.ai.RecruitRangedBowAttackGoal;
 import net.minecraft.core.BlockPos;
@@ -84,6 +85,7 @@ public class BowmanEntity extends AbstractRecruitEntity implements RangedAttackM
         super.registerGoals();
         this.goalSelector.addGoal(2, new RecruitStrategicFire(this, 10, 20));
         this.goalSelector.addGoal(3, new RecruitRangedBowAttackGoal<>(this, 1.15D, 10, 20, 44.0F, getMeleeStartRange()));
+        this.goalSelector.addGoal(8, new RecruitMoveTowardsTargetGoal(this, 1.15D, (float) this.getMeleeStartRange()));
     }
     @Override
     public double getMeleeStartRange() {
@@ -153,7 +155,7 @@ public class BowmanEntity extends AbstractRecruitEntity implements RangedAttackM
             arrow.shoot(d0, d1 + d3 * (double) 0.196F, d2, 1.75F, (float) (0));
 
             this.playSound(SoundEvents.ARROW_SHOOT, 1.0F, 1.0F / (this.getRandom().nextFloat() * 0.4F + 0.8F));
-            this.level.addFreshEntity(arrow);
+            this.getCommandSenderWorld().addFreshEntity(arrow);
 
 
             this.damageMainHandItem();
@@ -190,7 +192,7 @@ public class BowmanEntity extends AbstractRecruitEntity implements RangedAttackM
             arrow.shoot(d0, d1 + d3 + angle, d2, force + 1.95F, (float) (2.5));
 
             this.playSound(SoundEvents.ARROW_SHOOT, 1.0F, 1.0F / (this.getRandom().nextFloat() * 0.4F + 0.8F));
-            this.level.addFreshEntity(arrow);
+            this.getCommandSenderWorld().addFreshEntity(arrow);
 
 
             this.damageMainHandItem();

@@ -1,9 +1,11 @@
 package com.talhanation.recruits.network;
 
 import com.talhanation.recruits.CommandEvents;
+import com.talhanation.recruits.config.RecruitsModConfig;
 import com.talhanation.recruits.entities.AbstractRecruitEntity;
 import de.maxhenkel.corelib.net.Message;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.entity.Entity;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.network.NetworkEvent;
 
@@ -11,17 +13,18 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
-public class MessageClearTarget implements Message<MessageClearTarget> {
+public class MessageBackToMountEntity implements Message<MessageBackToMountEntity> {
+
     private UUID uuid;
+
     private int group;
 
-    public MessageClearTarget(){
+    public MessageBackToMountEntity(){
     }
 
-    public MessageClearTarget(UUID uuid, int group) {
+    public MessageBackToMountEntity(UUID uuid, int group) {
         this.uuid = uuid;
         this.group = group;
-
     }
 
     public Dist getExecutingSide() {
@@ -29,12 +32,14 @@ public class MessageClearTarget implements Message<MessageClearTarget> {
     }
 
     public void executeServerSide(NetworkEvent.Context context){
-        List<AbstractRecruitEntity> list = Objects.requireNonNull(context.getSender()).getCommandSenderWorld().getEntitiesOfClass(AbstractRecruitEntity.class, context.getSender().getBoundingBox().inflate(100));
-        for (AbstractRecruitEntity recruits : list) {
-            CommandEvents.onClearTargetButton(uuid, recruits, group);
+        List<AbstractRecruitEntity> recruitList = Objects.requireNonNull(context.getSender()).getCommandSenderWorld().getEntitiesOfClass(AbstractRecruitEntity.class, context.getSender().getBoundingBox().inflate(100));
+
+        for (AbstractRecruitEntity recruits : recruitList) {
+            CommandEvents.onMountButton(uuid, recruits, null, group);
+
         }
     }
-    public MessageClearTarget fromBytes(FriendlyByteBuf buf) {
+    public MessageBackToMountEntity fromBytes(FriendlyByteBuf buf) {
         this.uuid = buf.readUUID();
         this.group = buf.readInt();
         return this;
@@ -46,4 +51,3 @@ public class MessageClearTarget implements Message<MessageClearTarget> {
     }
 
 }
-

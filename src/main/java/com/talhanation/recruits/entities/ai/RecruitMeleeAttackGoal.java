@@ -1,15 +1,14 @@
 package com.talhanation.recruits.entities.ai;
 
 import com.talhanation.recruits.entities.AbstractRecruitEntity;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.pathfinder.Node;
 import net.minecraft.world.level.pathfinder.Path;
-
 import java.util.EnumSet;
 
 
@@ -39,7 +38,7 @@ public class RecruitMeleeAttackGoal extends Goal {
     }
 
     public boolean canUse() {
-        long i = this.recruit.level.getGameTime();
+        long i = this.recruit.getCommandSenderWorld().getGameTime();
         if (i - this.lastCanUseCheck < 20L) {
             return false;
         } else {
@@ -128,7 +127,7 @@ public class RecruitMeleeAttackGoal extends Goal {
             if (this.canPenalize) {
                 this.ticksUntilNextPathRecalculation += failedPathFindingPenalty;
                 if (this.recruit.getNavigation().getPath() != null) {
-                    net.minecraft.world.level.pathfinder.Node finalPathPoint = this.recruit.getNavigation().getPath().getEndNode();
+                    Node finalPathPoint = this.recruit.getNavigation().getPath().getEndNode();
                     if (finalPathPoint != null && livingentity.distanceToSqr(finalPathPoint.x, finalPathPoint.y, finalPathPoint.z) < 1)
                         failedPathFindingPenalty = 0;
                     else

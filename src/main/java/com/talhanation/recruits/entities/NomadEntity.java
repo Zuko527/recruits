@@ -28,11 +28,12 @@ import net.minecraft.world.level.ServerLevelAccessor;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Optional;
 
 public class NomadEntity extends BowmanEntity {
 
     private static final EntityDataAccessor<Boolean> HAD_HORSE = SynchedEntityData.defineId(NomadEntity.class, EntityDataSerializers.BOOLEAN);
-
+    public boolean isPatrol = false;
     public NomadEntity(EntityType<? extends AbstractRecruitEntity> entityType, Level world) {
         super(entityType, world);
     }
@@ -116,10 +117,10 @@ public class NomadEntity extends BowmanEntity {
     @Override
     public void tick() {
         super.tick();
-        if (!getHadHorse()){
+        if (!getHadHorse() && (RecruitsModConfig.RecruitHorseUnitsHorse.get() || isPatrol)){
             boolean hasHorse = this.getVehicle() != null && this.getVehicle() instanceof AbstractHorse;
             if (!hasHorse){
-                Horse horse = new Horse(EntityType.HORSE, this.level);
+                Horse horse = new Horse(EntityType.HORSE, this.getCommandSenderWorld());
                 horse.setPos(this.getX(), this.getY(), this.getZ());
                 horse.setTamed(true);
                 horse.equipSaddle(null);
@@ -129,8 +130,9 @@ public class NomadEntity extends BowmanEntity {
                 horse.setVariantAndMarkings(variant, markings);
 
                 this.startRiding(horse);
-                this.level.addFreshEntity(horse);
+                this.getCommandSenderWorld().addFreshEntity(horse);
                 this.setHadHorse(true);
+                this.setMountUUID(Optional.of(horse.getUUID()));
             }
         }
     }
@@ -138,9 +140,9 @@ public class NomadEntity extends BowmanEntity {
     @Override
     public void aiStep() {
         super.aiStep();
-        this.level.getProfiler().push("looting");
-        if (!this.level.isClientSide && this.canPickUpLoot() && this.isAlive() && !this.dead && net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.level, this)) {
-            for (ItemEntity itementity : this.level.getEntitiesOfClass(ItemEntity.class, this.getBoundingBox().inflate(2.5D, 2.5D, 2.5D))) {
+        this.getCommandSenderWorld().getProfiler().push("looting");
+        if (!this.getCommandSenderWorld().isClientSide && this.canPickUpLoot() && this.isAlive() && !this.dead && net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.getCommandSenderWorld(), this)) {
+            for (ItemEntity itementity : this.getCommandSenderWorld().getEntitiesOfClass(ItemEntity.class, this.getBoundingBox().inflate(2.5D, 2.5D, 2.5D))) {
                 if (!itementity.isRemoved() && !itementity.getItem().isEmpty() && !itementity.hasPickUpDelay() && this.wantsToPickUp(itementity.getItem())) {
                     this.pickUpItem(itementity);
                 }
