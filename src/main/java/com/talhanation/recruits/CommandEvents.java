@@ -187,7 +187,6 @@ public class CommandEvents {
             case 4 -> owner.sendSystemMessage(TEXT_HOLD_MY_POS(group_string));
             case 5 -> owner.sendSystemMessage(TEXT_PROTECT(group_string));
 
-			case 91 -> owner.sendSystemMessage(TEXT_BACK_TO_MOUNT(group_string));
             case 92 -> owner.sendSystemMessage(TEXT_UPKEEP(group_string));
             case 93 -> owner.sendSystemMessage(TEXT_SHIELDS_OFF(group_string));
             case 94 -> owner.sendSystemMessage(TEXT_STRATEGIC_FIRE_OFF(group_string));
@@ -214,11 +213,6 @@ public class CommandEvents {
     private static MutableComponent TEXT_BACK_TO_POS(String group_string) {
         return Component.translatable("chat.recruits.command.backToPos", group_string);
     }
-
-    private static MutableComponent TEXT_BACK_TO_MOUNT(String group_string) {
-        return Component.translatable("chat.recruits.command.backToMount", group_string);
-    }
-
 
     private static MutableComponent TEXT_HOLD_MY_POS(String group_string) {
         return Component.translatable("chat.recruits.command.holdMyPos", group_string);
@@ -361,7 +355,7 @@ public class CommandEvents {
                     }
                     else {
                         ServerPlayer serverPlayer = (ServerPlayer) player;
-                        TeamEvents.addNPCToData(serverPlayer.serverLevel(), player.getTeam().getName(), 1);
+                        TeamEvents.addNPCToData(serverPlayer.getLevel(), player.getTeam().getName(), 1);
                     }
                 }
             }
@@ -372,8 +366,7 @@ public class CommandEvents {
 
     public static void onMountButton(UUID player_uuid, AbstractRecruitEntity recruit, UUID mount_uuid, int group) {
         if (recruit.isEffectedByCommand(player_uuid, group)){
-            if(mount_uuid != null) recruit.shouldMount(true, mount_uuid);
-            else if(recruit.getMountUUID() != null) recruit.shouldMount(true, recruit.getMountUUID());
+            recruit.shouldMount(true, mount_uuid);
         }
     }
 
@@ -407,7 +400,7 @@ public class CommandEvents {
             if (isEntity) {
                 //Main.LOGGER.debug("server: entity_uuid: " + entity_uuid);
                 recruit.setUpkeepUUID(Optional.of(entity_uuid));
-                recruit.clearUpkeepPos();
+                recruit.setUpkeepPos(BlockPos.ZERO);
                 recruit.setUpkeepTimer(0);
             }
             else {
@@ -417,7 +410,7 @@ public class CommandEvents {
                         BlockHitResult blockHitResult = (BlockHitResult) hitResult;
                         BlockPos blockpos = blockHitResult.getBlockPos();
                         recruit.setUpkeepPos(blockpos);
-                        recruit.clearUpkeepEntity();
+                        recruit.setUpkeepUUID(Optional.empty());
                         recruit.setUpkeepTimer(0);
                     }
                 }
@@ -458,7 +451,7 @@ public class CommandEvents {
     }
 
     public static int getRecruitsInCommand(ServerPlayer player, int group){
-        List<AbstractRecruitEntity> list = Objects.requireNonNull(player.getCommandSenderWorld().getEntitiesOfClass(AbstractRecruitEntity.class, player.getBoundingBox().inflate(100)));
+        List<AbstractRecruitEntity> list = Objects.requireNonNull(player.level.getEntitiesOfClass(AbstractRecruitEntity.class, player.getBoundingBox().inflate(100)));
         List<AbstractRecruitEntity> loyals = new ArrayList<>();
 
         for (AbstractRecruitEntity recruit : list){

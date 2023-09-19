@@ -19,7 +19,7 @@ public class MessageLeaveTeam implements Message<MessageLeaveTeam> {
 
     public void executeServerSide(NetworkEvent.Context context) {
         ServerPlayer player = context.getSender();
-        ServerLevel level = player.serverLevel();
+        ServerLevel level = player.getLevel();
         TeamEvents.leaveTeam(player, level);
     }
 

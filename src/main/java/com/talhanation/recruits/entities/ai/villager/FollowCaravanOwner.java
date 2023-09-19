@@ -32,7 +32,7 @@ public class FollowCaravanOwner extends Goal {
 
     @Nullable
     private RecruitEntity getPatrolOwner() {
-        return villager.getCommandSenderWorld().getEntitiesOfClass(RecruitEntity.class, villager.getBoundingBox().inflate(16D))
+        return villager.level.getEntitiesOfClass(RecruitEntity.class, villager.getBoundingBox().inflate(16D))
                 .stream().filter(recruit -> recruit.getUUID().equals(uuid))
                 .findAny().get();
     }

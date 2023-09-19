@@ -76,7 +76,7 @@ public class VillagerEvents {
         if (entity instanceof IronGolem ironGolemEntity) {
 
             if (!ironGolemEntity.isPlayerCreated() && RecruitsModConfig.OverrideIronGolemSpawn.get()){
-                List<AbstractRecruitEntity> list1 = entity.getCommandSenderWorld().getEntitiesOfClass(AbstractRecruitEntity.class, ironGolemEntity.getBoundingBox().inflate(32));
+                List<AbstractRecruitEntity> list1 = entity.level.getEntitiesOfClass(AbstractRecruitEntity.class, ironGolemEntity.getBoundingBox().inflate(32));
                 if (list1.size() > 1) {
                     ironGolemEntity.remove(Entity.RemovalReason.KILLED);
                     //System.out.println(olem was removed");
@@ -92,13 +92,13 @@ public class VillagerEvents {
         }
     }
     private static void createRecruit(Villager villager, EntityType<? extends AbstractRecruitEntity> recruitType){
-        AbstractRecruitEntity abstractRecruit = recruitType.create(villager.getCommandSenderWorld());
+        AbstractRecruitEntity abstractRecruit = recruitType.create(villager.level);
         if (abstractRecruit != null) {
             abstractRecruit.copyPosition(villager);
             abstractRecruit.initSpawn();
-            villager.getCommandSenderWorld().addFreshEntity(abstractRecruit);
-            if(RecruitsModConfig.RecruitTablesPOIReleasing.get()) villager.releasePoi(MemoryModuleType.JOB_SITE);
+            villager.level.addFreshEntity(abstractRecruit);
             villager.releasePoi(MemoryModuleType.HOME);
+            villager.releasePoi(MemoryModuleType.JOB_SITE);
             villager.releasePoi(MemoryModuleType.MEETING_POINT);
             villager.discard();
         }
@@ -150,7 +150,7 @@ public class VillagerEvents {
     }
 
     private static void createRecruitIronGolem(LivingEntity entity){
-        RecruitEntity recruit = ModEntityTypes.RECRUIT.get().create(entity.getCommandSenderWorld());
+        RecruitEntity recruit = ModEntityTypes.RECRUIT.get().create(entity.level);
         IronGolem villager = (IronGolem) entity;
         recruit.copyPosition(villager);
 
@@ -159,11 +159,11 @@ public class VillagerEvents {
         villager.remove(Entity.RemovalReason.DISCARDED);
         recruit.getInventory().setItem(8, Items.BREAD.getDefaultInstance());
         villager.remove(Entity.RemovalReason.DISCARDED);
-        villager.getCommandSenderWorld().addFreshEntity(recruit);
+        villager.level.addFreshEntity(recruit);
     }
 
     private void createRecruitShieldmanIronGolem(LivingEntity entity){
-        RecruitShieldmanEntity recruitShieldman = ModEntityTypes.RECRUIT_SHIELDMAN.get().create(entity.getCommandSenderWorld());
+        RecruitShieldmanEntity recruitShieldman = ModEntityTypes.RECRUIT_SHIELDMAN.get().create(entity.level);
         IronGolem villager = (IronGolem) entity;
         recruitShieldman.copyPosition(villager);
 
@@ -171,11 +171,11 @@ public class VillagerEvents {
 
         recruitShieldman.getInventory().setItem(8, Items.BREAD.getDefaultInstance());
         villager.remove(Entity.RemovalReason.DISCARDED);
-        villager.getCommandSenderWorld().addFreshEntity(recruitShieldman);
+        villager.level.addFreshEntity(recruitShieldman);
     }
 
     private static void createBowmanIronGolem(LivingEntity entity){
-        BowmanEntity bowman = ModEntityTypes.BOWMAN.get().create(entity.getCommandSenderWorld());
+        BowmanEntity bowman = ModEntityTypes.BOWMAN.get().create(entity.level);
         IronGolem villager = (IronGolem) entity;
         bowman.copyPosition(villager);
 
@@ -183,7 +183,7 @@ public class VillagerEvents {
 
         bowman.getInventory().setItem(8, Items.BREAD.getDefaultInstance());
         villager.remove(Entity.RemovalReason.DISCARDED);
-        villager.getCommandSenderWorld().addFreshEntity(bowman);
+        villager.level.addFreshEntity(bowman);
     }
 
     private static void spawnSmallGuardRecruits(BlockPos upPos, ServerLevel world, Random random) {
@@ -427,12 +427,9 @@ public class VillagerEvents {
             this.givenExp = givenExp;
             this.priceMultiplier = 0.05F;
         }
-		
-        @Nullable
-        @Override
+
         public MerchantOffer getOffer(Entity entity, RandomSource random) {
             return new MerchantOffer(new ItemStack(this.buyingItem, this.buyingAmount), new ItemStack(sellingItem, sellingAmount), maxUses, givenExp, priceMultiplier);
-
         }
     }
 }

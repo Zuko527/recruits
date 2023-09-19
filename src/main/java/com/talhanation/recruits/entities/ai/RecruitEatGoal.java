@@ -19,7 +19,7 @@ public class RecruitEatGoal extends Goal {
 
     @Override
     public boolean canUse() {
-        return hasFoodInInv() && recruit.needsToEat() && !recruit.isUsingItem();
+        return hasFoodInInv() && recruit.needsToEat() && !recruit.getIsEating() && !recruit.isUsingItem();
     }
 
     @Override
@@ -39,6 +39,7 @@ public class RecruitEatGoal extends Goal {
     public void start() {
         slotID = 0;
         beforeItem = recruit.getOffhandItem().copy();
+        recruit.setIsEating(true);
         this.foodStack = getAndRemoveFoodInInv().copy();
         /*
         Main.LOGGER.debug("Start--------------: ");
@@ -59,6 +60,7 @@ public class RecruitEatGoal extends Goal {
 
     @Override
     public void stop() {
+        recruit.setIsEating(false);
         recruit.stopUsingItem();
 
         if(recruit.getMoral() < 100){

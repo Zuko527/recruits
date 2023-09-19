@@ -2,7 +2,6 @@ package com.talhanation.recruits.config;
 
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.electronwill.nightconfig.core.io.WritingMode;
-import com.talhanation.recruits.world.RecruitsTeamSavedData;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.fml.common.Mod;
 
@@ -16,9 +15,8 @@ public class RecruitsModConfig {
     private static final ForgeConfigSpec.Builder BUILDER = new ForgeConfigSpec.Builder();
     public static ForgeConfigSpec CONFIG;
     public static ForgeConfigSpec.IntValue VERSION;
-    public static final int NEW_VERSION = 26;
+    public static final int NEW_VERSION = 25;
     public static ForgeConfigSpec.BooleanValue PlayVillagerAmbientSound;
-    public static ForgeConfigSpec.BooleanValue RecruitTablesPOIReleasing;
     public static ForgeConfigSpec.BooleanValue OverrideIronGolemSpawn;
     public static ForgeConfigSpec.BooleanValue PillagerFriendlyFire;
     public static ForgeConfigSpec.BooleanValue PillagerSpawn;
@@ -51,11 +49,8 @@ public class RecruitsModConfig {
     public static ForgeConfigSpec.ConfigValue<List<String>> HorsemanHandEquipment;
     public static ForgeConfigSpec.ConfigValue<List<String>> NomadHandEquipment;
     public static ForgeConfigSpec.ConfigValue<List<String>> AcceptedDamagesourceImmunity;
-    public static ForgeConfigSpec.BooleanValue AggroRecruitsBlockPlaceBreakEvents;
-    public static ForgeConfigSpec.BooleanValue NeutralRecruitsBlockPlaceBreakEvents;
-
-    public static ForgeConfigSpec.BooleanValue AggroRecruitsBlockInteractingEvents;
-    public static ForgeConfigSpec.BooleanValue NeutralRecruitsBlockInteractingEvents;
+    public static ForgeConfigSpec.BooleanValue AggroRecruitsBlockEvents;
+    public static ForgeConfigSpec.BooleanValue NeutralRecruitsBlockEvents;
     public static ForgeConfigSpec.BooleanValue ShouldRecruitPatrolsSpawn;
     public static ForgeConfigSpec.BooleanValue ShouldPillagerPatrolsSpawn;
     public static ForgeConfigSpec.DoubleValue RecruitPatrolsSpawnChance;
@@ -69,12 +64,10 @@ public class RecruitsModConfig {
     public static ForgeConfigSpec.BooleanValue GlobalTeamSeeFriendlyInvisibleSetting;
     public static ForgeConfigSpec.BooleanValue GlobalTeamSetting;
     public static ForgeConfigSpec.BooleanValue CommandScreenToggle;
-    public static ForgeConfigSpec.BooleanValue RecruitHorseUnitsHorse;
-    public static ForgeConfigSpec.BooleanValue RecruitsKeepTeamAfterDisband;
     public static ArrayList<String> BLACKLIST = new ArrayList<>(
             Arrays.asList("minecraft:creeper", "minecraft:ghast"));
     public static ArrayList<String> MOUNTS = new ArrayList<>(
-            Arrays.asList("minecraft:horse", "minecraft:llama", "minecraft:pig", "minecraft:boat", "minecraft:minecart", "smallships:cog", "smallships:brigg", "smallships:galley", "minecraft:camel"));
+            Arrays.asList("minecraft:horse", "minecraft:llama", "minecraft:pig", "minecraft:boat", "minecraft:minecart", "smallships:cog", "smallships:brigg", "smallships:galley", "camels:camel"));
     public static ArrayList<String> START_ARMOR = new ArrayList<>();
     public static ArrayList<String> RECRUIT_HAND = new ArrayList<>(
             Arrays.asList("minecraft:wooden_sword", ""));
@@ -234,31 +227,11 @@ public class RecruitsModConfig {
                 .worldRestart()
                 .defineInRange("NomadCost", 19, 0, 999);
 
-        RecruitHorseUnitsHorse = BUILDER.comment("""
-                        ----RecruitHorseUnitsHorse----
-                        \t(takes effect after restart)
-                        \t
-                        Should the Horse units spawn with a horse?""
-                        default: true""")
-
-                .worldRestart()
-                .define("RecruitHorseUnitsHorse", true);
-
         /*
         Village Config
          */
         BUILDER.pop();
         BUILDER.comment("Recruit Village Config:").push("Villages");
-
-        RecruitTablesPOIReleasing = BUILDER.comment("""
-
-                        ----Should Villager Recruits that were created with Tables release the POI for other Villagers?----
-                        ----True -> allows multiple villagers to become a recruit with one table.----
-                        ----False -> only one villager can become a recruit with one table.----
-                        \t(takes effect after restart)
-                        \tdefault: true""")
-                .worldRestart()
-                .define("RecruitTablesPOIReleasing", true);
 
         OverrideIronGolemSpawn = BUILDER.comment("""
 
@@ -417,37 +390,21 @@ public class RecruitsModConfig {
         BUILDER.pop();
         BUILDER.comment("Block Event Config:").push("BlockEvents");
 
-        AggroRecruitsBlockPlaceBreakEvents= BUILDER.comment("""
+        AggroRecruitsBlockEvents= BUILDER.comment("""
 
-                        ----Should Aggressive Recruits attack enemy players that are placing or breaking blocks immediately?----
+                        ----Should Aggressive Recruits attack enemy players that are placing, interacting or breaking blocks immediately?----
                         \t(takes effect after restart)
                         \tdefault: true""")
                 .worldRestart()
-                .define("AggroRecruitsBlockPlaceBreakEvents", true);
+                .define("AggroRecruitsBlockEvents", true);
 
-        NeutralRecruitsBlockPlaceBreakEvents= BUILDER.comment("""
+        NeutralRecruitsBlockEvents= BUILDER.comment("""
 
-                        ----Should Neutral Recruits attack enemy players that are placing or breaking blocks immediately?----
+                        ----Should Neutral Recruits attack enemy players that are placing, interacting or breaking blocks immediately?----
                         \t(takes effect after restart)
                         \tdefault: true""")
                 .worldRestart()
-                .define("NeutralRecruitsBlockPlaceBreakEvents", true);
-
-        AggroRecruitsBlockInteractingEvents= BUILDER.comment("""
-
-                        ----Should Aggressive Recruits attack enemy players that are interacting with blocks immediately?----
-                        \t(takes effect after restart)
-                        \tdefault: true""")
-                .worldRestart()
-                .define("AggroRecruitsBlockInteractingEvents", true);
-
-        NeutralRecruitsBlockInteractingEvents= BUILDER.comment("""
-
-                        ----Should Neutral Recruits attack enemy players that are interacting with blocks immediately?----
-                        \t(takes effect after restart)
-                        \tdefault: true""")
-                .worldRestart()
-                .define("NeutralRecruitsBlockInteractingEvents", true);
+                .define("NeutralRecruitsBlockEvents", true);
 
         /*
         Patrol Config
@@ -541,13 +498,6 @@ public class RecruitsModConfig {
 
         BUILDER.pop();
         BUILDER.comment("Recruit Teams Config:").push("Teams");
-
-        RecruitsKeepTeamAfterDisband = BUILDER.comment("""
-                        ----Should recruits stay in the same team after disbanding?----
-                        \t(takes effect after restart)
-                        \tdefault: false""")
-                .worldRestart()
-                .define("RecruitsKeepTeamAfterDisband", false);
 
         DisableVanillaTeamCommands = BUILDER.comment("""
                         ----Should specific vanilla team commands be disabled?----

@@ -27,6 +27,7 @@ public class MessageMountEntity implements Message<MessageMountEntity> {
         this.uuid = uuid;
         this.target = target;
         this.group = group;
+
     }
 
     public Dist getExecutingSide() {
@@ -34,13 +35,11 @@ public class MessageMountEntity implements Message<MessageMountEntity> {
     }
 
     public void executeServerSide(NetworkEvent.Context context){
-        List<Entity> entityList = Objects.requireNonNull(context.getSender()).getCommandSenderWorld().getEntitiesOfClass(Entity.class, context.getSender().getBoundingBox().inflate(100));
+        List<Entity> entityList = Objects.requireNonNull(context.getSender()).level.getEntitiesOfClass(Entity.class, context.getSender().getBoundingBox().inflate(100));
         for(Entity mount : entityList){
-            String mountEncoded= mount.getEncodeId();
-            boolean containsConfig = RecruitsModConfig.MountWhiteList.get().contains(mountEncoded);
-            if(mount.getUUID().equals(target) && containsConfig){
+            if(mount.getUUID().equals(target) && RecruitsModConfig.MountWhiteList.get().contains(mount.getEncodeId())){
 
-                List<AbstractRecruitEntity> recruitList = Objects.requireNonNull(context.getSender()).getCommandSenderWorld().getEntitiesOfClass(AbstractRecruitEntity.class, context.getSender().getBoundingBox().inflate(100));
+                List<AbstractRecruitEntity> recruitList = Objects.requireNonNull(context.getSender()).level.getEntitiesOfClass(AbstractRecruitEntity.class, context.getSender().getBoundingBox().inflate(100));
                 for (AbstractRecruitEntity recruits : recruitList) {
                     CommandEvents.onMountButton(uuid, recruits, target, group);
                 }

@@ -5,7 +5,6 @@ import com.talhanation.recruits.Main;
 import com.talhanation.recruits.inventory.TeamCreationContainer;
 import com.talhanation.recruits.network.MessageCreateTeam;
 import de.maxhenkel.corelib.inventory.ScreenBase;
-import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.network.chat.Component;
@@ -108,17 +107,21 @@ public class TeamCreationScreen extends ScreenBase<TeamCreationContainer> {
     }
 
     @Override
-    protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
-        super.renderLabels(guiGraphics, mouseX, mouseY);
-        guiGraphics.drawString(font, "Create a Team:", 18, 11, fontColor, false);
-        guiGraphics.drawString(font, playerInventory.getDisplayName().getVisualOrderText(), 8, this.imageHeight - 96 + 2, fontColor, false);
-        guiGraphics.drawString(font, color, 75, this.imageHeight - 112, colorId, false);
-        guiGraphics.drawString(font, "Color:", 18, this.imageHeight - 112, fontColor, false);
+    protected void renderLabels(PoseStack matrixStack, int mouseX, int mouseY) {
+        super.renderLabels(matrixStack, mouseX, mouseY);
+
+        font.draw(matrixStack, "Create a Team:", 18  , 11, fontColor);
+
+        font.draw(matrixStack, playerInventory.getDisplayName().getVisualOrderText(), 8, this.imageHeight - 96 + 2, fontColor);
+
+        font.draw(matrixStack, color, 75, this.imageHeight - 112, colorId);
+
+        font.draw(matrixStack, "Color:",18, this.imageHeight - 112, fontColor);
 
     }
 
-    protected void renderBg(GuiGraphics guiGraphics, float partialTicks, int mouseX, int mouseY) {
-        super.renderBg(guiGraphics, partialTicks, mouseX, mouseY);
+    protected void renderBg(PoseStack matrixStack, float partialTicks, int mouseX, int mouseY) {
+        super.renderBg(matrixStack, partialTicks, mouseX, mouseY);
 
     }
 

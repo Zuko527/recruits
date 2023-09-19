@@ -19,7 +19,6 @@ public class RecruitUpkeepEntityGoal extends Goal {
     public Optional<Entity> entity;
     public Container container;
     public boolean message;
-    public boolean messageNotInRange;
     public BlockPos pos;
 
     public RecruitUpkeepEntityGoal(AbstractRecruitEntity recruit) {
@@ -28,12 +27,18 @@ public class RecruitUpkeepEntityGoal extends Goal {
 
     @Override
     public boolean canUse() {
-        return recruit.needsToGetFood() && recruit.getUpkeepUUID() != null;
+        return recruit.needsToGetFood();
     }
 
     @Override
     public boolean canContinueToUse() {
         return canUse();
+    }
+
+    private boolean hasFoodInInv(){
+        return recruit.getInventory().items
+                .stream()
+                .anyMatch(ItemStack::isEdible);
     }
 
     private boolean isFoodInEntity(Container container){
@@ -50,17 +55,16 @@ public class RecruitUpkeepEntityGoal extends Goal {
     public void start() {
         super.start();
         message = true;
-        messageNotInRange = true;
     }
 
     @Override
     public void tick() {
         super.tick();
-        this.entity = findEntity();
+        this.entity = findEntityPos();
 
         if (recruit.getUpkeepTimer() == 0) {
             //Main.LOGGER.debug("searching upkeep entity");
-            if (entity.isPresent() && !recruit.hasFoodInInv()) {
+            if (entity.isPresent() && !this.hasFoodInInv()) {
                 this.pos = this.entity.get().getOnPos();
 
                 if (entity.get() instanceof AbstractHorse horse) {
@@ -130,12 +134,7 @@ public class RecruitUpkeepEntityGoal extends Goal {
                 }
             }
             else {
-                if (recruit.getOwner() != null && messageNotInRange) {
-                    recruit.getOwner().sendSystemMessage(TEXT_NOT_IN_RANGE(recruit.getName().getString()));
-                    messageNotInRange = false;
-
-                    recruit.clearUpkeepEntity();
-                }
+                this.entity = findEntityPos();
             }
         }
     }
@@ -146,9 +145,9 @@ public class RecruitUpkeepEntityGoal extends Goal {
         recruit.setUpkeepTimer(recruit.getUpkeepCooldown());
     }
 
-    private Optional<Entity> findEntity() {
+    private Optional<Entity> findEntityPos() {
         if(this.recruit.getUpkeepUUID() != null) {
-            return recruit.getCommandSenderWorld().getEntitiesOfClass(Entity.class, recruit.getBoundingBox().inflate(100.0D))
+            return recruit.level.getEntitiesOfClass(Entity.class, recruit.getBoundingBox().inflate(100.0D))
                     .stream()
                     .filter(entity -> entity.getUUID().equals(recruit.getUpkeepUUID())).findAny();
         }
@@ -178,10 +177,6 @@ public class RecruitUpkeepEntityGoal extends Goal {
     }
     private MutableComponent TEXT_NO_PLACE(String name) {
         return Component.translatable("chat.recruits.text.noPlaceInInv", name);
-    }
-
-    private MutableComponent TEXT_NOT_IN_RANGE(String name) {
-        return Component.translatable("chat.recruits.text.cantFindEntity", name);
     }
 
     private MutableComponent TEXT_FOOD(String name) {

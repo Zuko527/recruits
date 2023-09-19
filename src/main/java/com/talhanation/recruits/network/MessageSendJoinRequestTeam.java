@@ -30,7 +30,7 @@ public class MessageSendJoinRequestTeam implements Message<MessageSendJoinReques
 
     public void executeServerSide(NetworkEvent.Context context) {
         ServerPlayer player = context.getSender();
-        ServerLevel level = player.serverLevel();
+        ServerLevel level = player.getLevel();
         TeamEvents.sendJoinRequest(level, player, teamName);
         player.sendSystemMessage(JOIN_REQUEST(teamName));
     }

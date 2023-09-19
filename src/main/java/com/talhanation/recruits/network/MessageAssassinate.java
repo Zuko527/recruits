@@ -34,7 +34,7 @@ public class MessageAssassinate implements Message<MessageAssassinate> {
 
     public void executeServerSide(NetworkEvent.Context context) {
         ServerPlayer player = context.getSender();
-        ServerLevel world = player.serverLevel();
+        ServerLevel world = player.getLevel();
         MinecraftServer server = world.getServer();
         PlayerList list = server.getPlayerList();
         ServerPlayer targetPlayer = list.getPlayerByName(name);

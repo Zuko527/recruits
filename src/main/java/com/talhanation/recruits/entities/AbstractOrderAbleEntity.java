@@ -18,6 +18,7 @@ import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
@@ -349,8 +350,8 @@ public abstract class AbstractOrderAbleEntity extends AbstractInventoryEntity{
     }
 
     public void makelevelUpSound() {
-        this.getCommandSenderWorld().playSound(null, this.getX(), this.getY() + 4 , this.getZ(), SoundEvents.VILLAGER_YES, this.getSoundSource(), 15.0F, 0.8F + 0.4F * this.random.nextFloat());
-        this.getCommandSenderWorld().playSound(null, this.getX(), this.getY() + 4 , this.getZ(), SoundEvents.PLAYER_LEVELUP, this.getSoundSource(), 15.0F, 0.8F + 0.4F * this.random.nextFloat());
+        this.level.playSound(null, this.getX(), this.getY() + 4 , this.getZ(), SoundEvents.VILLAGER_YES, this.getSoundSource(), 15.0F, 0.8F + 0.4F * this.random.nextFloat());
+        this.level.playSound(null, this.getX(), this.getY() + 4 , this.getZ(), SoundEvents.PLAYER_LEVELUP, this.getSoundSource(), 15.0F, 0.8F + 0.4F * this.random.nextFloat());
     }
 
     @Override
@@ -383,10 +384,10 @@ public abstract class AbstractOrderAbleEntity extends AbstractInventoryEntity{
     }
 
     @Override
-    public boolean killedEntity(ServerLevel p_241847_1_, LivingEntity p_241847_2_) {
+    public boolean wasKilled(ServerLevel p_241847_1_, LivingEntity p_241847_2_) {
         this.addXp(2);
         this.setKills(this.getKills() + 1);
-        return super.killedEntity(p_241847_1_, p_241847_2_);
+        return super.wasKilled(p_241847_1_, p_241847_2_);
     }
 
     @Override
@@ -406,7 +407,7 @@ public abstract class AbstractOrderAbleEntity extends AbstractInventoryEntity{
                 this.useItem = ItemStack.EMPTY;
                 this.setItemSlot(EquipmentSlot.OFFHAND, ItemStack.EMPTY);
                 this.getSlot(10).set(ItemStack.EMPTY);
-                this.playSound(SoundEvents.SHIELD_BREAK, 0.8F, 0.8F + this.getCommandSenderWorld().random.nextFloat() * 0.4F);
+                this.playSound(SoundEvents.SHIELD_BREAK, 0.8F, 0.8F + this.level.random.nextFloat() * 0.4F);
             }
 
             ItemStack itemstack = this.inventory.getItem(10);// 10 = hoffhand slot
@@ -422,7 +423,7 @@ public abstract class AbstractOrderAbleEntity extends AbstractInventoryEntity{
     public InteractionResult mobInteract(Player player, InteractionHand hand) {
         ItemStack itemstack = player.getItemInHand(hand);
         Item item = itemstack.getItem();
-        if (this.getCommandSenderWorld().isClientSide) {
+        if (this.level.isClientSide) {
             boolean flag = false; //this.isOwnedBy(player) || this.isOwned() || item == Items.BONE && !this.isOwned();
             return flag ? InteractionResult.CONSUME : InteractionResult.PASS;
         } else {

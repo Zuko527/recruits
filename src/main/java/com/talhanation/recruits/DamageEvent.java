@@ -20,7 +20,7 @@ public class DamageEvent {
     public static void onPlayerAttack(AttackEntityEvent event) {
         if (!event.isCanceled()) {
             Player player = event.getEntity();
-            if (player.getCommandSenderWorld().isClientSide()) {
+            if (player.getLevel().isClientSide()) {
                 return;
             }
             float str = player.getAttackStrengthScale(0);
@@ -55,7 +55,7 @@ public class DamageEvent {
             LivingEntity target = event.getEntity();
             DamageSource source = event.getSource();
 
-            if (target.getCommandSenderWorld().isClientSide()) {
+            if (target.getLevel().isClientSide()) {
                 return;
             }
             //Velocity Damage

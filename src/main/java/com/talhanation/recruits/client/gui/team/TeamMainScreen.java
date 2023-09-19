@@ -7,7 +7,6 @@ import com.talhanation.recruits.TeamEvents;
 import com.talhanation.recruits.inventory.TeamMainContainer;
 import com.talhanation.recruits.network.MessageServerUpdateTeamInspectMenu;
 import de.maxhenkel.corelib.inventory.ScreenBase;
-import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -63,11 +62,11 @@ public class TeamMainScreen extends ScreenBase<TeamMainContainer> {
         }));
     }
 
-    protected void render(GuiGraphics guiGraphics, float partialTicks, int mouseX, int mouseY) {
+    protected void render(PoseStack matrixStack, float partialTicks, int mouseX, int mouseY) {
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.setShaderTexture(0, RESOURCE_LOCATION);
-        guiGraphics.blit(texture, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight);
+        this.blit(matrixStack, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight);
     }
 
 }

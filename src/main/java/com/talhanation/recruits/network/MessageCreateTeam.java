@@ -30,7 +30,7 @@ public class MessageCreateTeam implements Message<MessageCreateTeam> {
 
     public void executeServerSide(NetworkEvent.Context context) {
         ServerPlayer player = context.getSender();
-        ServerLevel world = player.serverLevel();
+        ServerLevel world = player.getLevel();
         TeamEvents.createTeam(context.getSender(), world, this.teamName, player.getName().getString(), this.banner, this.color);
     }
 

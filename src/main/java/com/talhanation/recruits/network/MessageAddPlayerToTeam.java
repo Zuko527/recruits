@@ -27,7 +27,7 @@ public class MessageAddPlayerToTeam implements Message<MessageAddPlayerToTeam> {
 
     public void executeServerSide(NetworkEvent.Context context) {
         ServerPlayer player = context.getSender();
-        ServerLevel world = player.serverLevel();
+        ServerLevel world = player.getLevel();
 
         TeamEvents.addPlayerToTeam(context.getSender(), world, this.teamName, this.namePlayerToAdd);
     }
