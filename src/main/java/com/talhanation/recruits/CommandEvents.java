@@ -146,8 +146,6 @@ public class CommandEvents {
     }
 
     public static void onMoveCommand(Player player, UUID player_uuid, AbstractRecruitEntity recruit, int group) {
-        if (recruit.isEffectedByCommand(player_uuid, group)){
-
             HitResult hitResult = player.pick(100, 1F, true);
             if(recruit instanceof CaptainEntity captain) captain.shipAttacking = false;
             if(recruit.getShouldMount()) recruit.setShouldMount(false);
@@ -176,7 +174,6 @@ public class CommandEvents {
 
             checkPatrolLeaderState(recruit);
             recruit.forcedUpkeep = false;
-        }
     }
 
     public static void openCommandScreen(Player player) {

@@ -1,6 +1,7 @@
 package com.talhanation.recruits.network;
 
 import com.talhanation.recruits.CommandEvents;
+import com.talhanation.recruits.client.gui.group.RecruitsGroup;
 import com.talhanation.recruits.entities.AbstractRecruitEntity;
 import de.maxhenkel.corelib.net.Message;
 import net.minecraft.network.FriendlyByteBuf;
@@ -15,14 +16,14 @@ import java.util.UUID;
 public class MessageMove implements Message<MessageMove> {
 
     private UUID player;
-    private int group;
+    private int groupId;
 
     public MessageMove(){
     }
 
-    public MessageMove(UUID player, int group) {
+    public MessageMove(UUID player, List<RecruitsGroup> groups) {
         this.player = player;
-        this.group = group;
+        this.groupId = groupId;
     }
 
     public Dist getExecutingSide() {
@@ -33,18 +34,18 @@ public class MessageMove implements Message<MessageMove> {
         ServerPlayer serverPlayer = context.getSender();
         List<AbstractRecruitEntity> list = Objects.requireNonNull(context.getSender()).getCommandSenderWorld().getEntitiesOfClass(AbstractRecruitEntity.class, context.getSender().getBoundingBox().inflate(100));
         for (AbstractRecruitEntity recruits : list) {
-                CommandEvents.onMoveCommand(serverPlayer, this.player, recruits, group);
+                CommandEvents.onMoveCommand(serverPlayer, this.player, recruits, groupId);
         }
     }
     public MessageMove fromBytes(FriendlyByteBuf buf) {
         this.player = buf.readUUID();
-        this.group = buf.readInt();
+        this.groupId = buf.readInt();
         return this;
     }
 
     public void toBytes(FriendlyByteBuf buf) {
         buf.writeUUID(this.player);
-        buf.writeInt(this.group);
+        buf.writeInt(this.groupId);
     }
 
 }
