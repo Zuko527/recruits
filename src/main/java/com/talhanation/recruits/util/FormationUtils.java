@@ -32,7 +32,7 @@ public class FormationUtils {
         Vec3 left = new Vec3(-forward.z, forward.y, forward.x);
 
         int maxInRow = 20;
-        double spacing = 2.5;
+        double spacing = 1;
 
         List<FormationPosition> possiblePositions = new ArrayList<>();
 
@@ -81,7 +81,7 @@ public class FormationUtils {
         Vec3 forward = player.getForward();
         Vec3 left = new Vec3(-forward.z, forward.y, forward.x);
 
-        double spacing = 2.5;
+        double spacing = 1;
 
         int numRecruits = recruits.size();
         int sideLength = (int) Math.ceil(Math.sqrt(numRecruits));
@@ -133,7 +133,7 @@ public class FormationUtils {
         Vec3 forward = player.getForward();
         Vec3 left = new Vec3(-forward.z, forward.y, forward.x);
 
-        double spacing = 2.5;
+        double spacing = 1;
         int numRecruits = recruits.size();
 
         List<FormationPosition> possiblePositions = new ArrayList<>();
@@ -181,7 +181,7 @@ public class FormationUtils {
     }
 
     public static void circleFormation(ServerPlayer player, List<AbstractRecruitEntity> recruits, Vec3 targetPos) {
-        double spacing = 2.5; // Distance between recruits in the circle
+        double spacing = 1; // Distance between recruits in the circle
         int numRecruits = recruits.size();
 
         double radius = spacing * numRecruits / (2 * Math.PI); // Calculate radius based on the number of recruits
