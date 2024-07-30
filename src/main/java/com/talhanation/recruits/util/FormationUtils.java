@@ -81,7 +81,7 @@ public class FormationUtils {
         Vec3 forward = player.getForward();
         Vec3 left = new Vec3(-forward.z, forward.y, forward.x);
 
-        double spacing = 2.5;
+        double spacing = 1;
 
         int numRecruits = recruits.size();
         int sideLength = (int) Math.ceil(Math.sqrt(numRecruits));
